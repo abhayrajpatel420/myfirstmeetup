@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 💌</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Sacramento&display=swap');
+        body {
+            background-color: #fce4ec;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            user-select: none;
+            /* Text selection disable taki prashani na ho */
+        }
+        
+        .container {
+            position: relative;
+            transform: scale(1);
+            /* Mobile fit */
+        }
+        
+        .envelope-wrapper {
+            background: #ff5e6c;
+            width: 300px;
+            height: 200px;
+            position: relative;
+            cursor: pointer;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s;
+        }
+        
+        .envelope-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 100px 150px;
+            border-color: transparent #ff7582 transparent #ff7582;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 2;
+            pointer-events: none;
+            /* Click through to letter */
+        }
+        
+        .envelope-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 100px 150px;
+            border-color: transparent transparent #ff4757 transparent;
+            z-index: 2;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            pointer-events: none;
+        }
+        
+        .lid {
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 100px 150px;
+            border-color: #ff5e6c transparent transparent transparent;
+            z-index: 3;
+            transform-origin: top;
+            transition: transform 0.5s 0.5s, z-index 0.2s 0.5s;
+        }
+        
+        .open .lid {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        
+        .open .letter {
+            transform: translateY(-120px);
+            z-index: 2;
+            transition: transform 0.6s 1s;
+        }
+        
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 270px;
+            height: 180px;
+            background: white;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+        }
+        
+        .letter h2 {
+            font-family: 'Sacramento', cursive;
+            color: #ff4757;
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .letter p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+        
+        .heart-sticker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #fff;
+            z-index: 4;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .open .heart-sticker {
+            opacity: 0;
+        }
+        
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            /* Zaroori hai button move ke liye */
+        }
+        
+        .btn {
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-yes {
+            background: #2ed573;
+            box-shadow: 0 4px 10px rgba(46, 213, 115, 0.4);
+        }
+        
+        .btn-no {
+            background: #ff4757;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+            transition: 0.2s;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 10px;
+        }
+        
+        .click-hint {
+            position: absolute;
+            bottom: -40px;
+            width: 100%;
+            text-align: center;
+            color: #ff4757;
+            animation: bounce 2s infinite;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="container">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="lid"></div>
+            <div class="heart-sticker">❤️</div>
+
+            <div class="letter">
+                <h2>I'm Sorry...</h2>
+                <p>
+                    Mujhe pata hai first impression matter karta hai.<br> Maine galti kar di.<br>
+                    <b>Can we restart?</b>
+                </p>
+                <div class="actions">
+                    <button class="btn btn-yes" onclick="accepted()">Yes! ❤️</button>
+
+                    <button class="btn btn-no" id="noBtn" ontouchstart="moveButton()" onmouseover="moveButton()">Nope</button>
+                </div>
+            </div>
+        </div>
+        <div class="click-hint" id="hint-text">Lifafa kholne ke liye tap karein ☝️</div>
+    </div>
+
+    <div class="watermark">creator: abhayrajp393</div>
+
+    <script>
+        let isOpen = false;
+
+        function openEnvelope() {
+            if (!isOpen) {
+                document.querySelector('.envelope-wrapper').classList.add('open');
+                document.getElementById('hint-text').style.display = 'none';
+
+                // Music logic
+                const music = document.getElementById('bg-music');
+                music.volume = 0.5;
+                music.play().catch(e => console.log("Audio needs interaction"));
+
+                isOpen = true;
+            }
+        }
+
+        // Button Bhaagne wala Logic
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+
+            // Screen ki width/height check karke random jagah bhejna
+            // -100 se +100 pixels ke beech mein kahin bhi jump karega
+            const x = Math.random() * 200 - 100;
+            const y = Math.random() * 200 - 100;
+
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function accepted() {
+            document.querySelector('.letter').innerHTML = `
+                <h2 style="font-size:2.5rem; color:#2ed573">Yay! ✨</h2>
+                <p style="font-size:1rem; margin-top:20px; color:#333;">
+                    Thank you so much!<br>
+                    Promise, next time perfect hoga.<br>
+                    ☕ Coffee?
+                </p>
+            `;
+        }
+    </script>
+</body>
+
+</html>
